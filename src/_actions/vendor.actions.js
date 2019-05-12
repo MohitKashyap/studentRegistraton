@@ -30,7 +30,7 @@ function createVendor(payload) {
         userService.post(apiEndpoint, payload)
             .then((response) => {
                 dispatch(createUserInfo());
-                history.push('/vendor');
+                history.push('/registrations');
             })
     }
 }
