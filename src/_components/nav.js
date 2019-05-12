@@ -84,7 +84,7 @@ class Navigation extends React.Component {
             <ListItemText primary="Home" />
           </ListItem>
 
-          <ListItem button component='a' href="/vendor">
+          <ListItem button component='a' href="/registrations">
             <ListItemIcon>
               <VendorIcon />
             </ListItemIcon>

@@ -141,7 +141,7 @@ class Vendor extends Component {
                           <TableCell>{n.gender}</TableCell>
                           <TableCell>{n.qualification}</TableCell>
                           <TableCell>
-                            <IconButton className={classes.button} aria-label="Edit" component='a' href={`/edit-vendor/${n._id}`}>
+                            <IconButton className={classes.button} aria-label="Edit" component='a' href={`/edit-registration/${n._id}`}>
                               <EditIcon />
                             </IconButton>
                             <IconButton className={classes.button} aria-label="Delete" onClick={(event) => this.handleClick(event, n._id)}>

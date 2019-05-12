@@ -249,7 +249,7 @@ class AddVendor extends Component {
                                                 <Grid item xs={3} container justify="center">
                                                     <Grid container spacing={24}>
                                                         <Grid item xs={6} container justify="center">
-                                                            <Button variant="contained" color="secondary" className={classes.button} component='a' href="/vendor">
+                                                            <Button variant="contained" color="secondary" className={classes.button} component='a' href="/registrations">
                                                                 Cancel
                                                     </Button>
                                                         </Grid>
