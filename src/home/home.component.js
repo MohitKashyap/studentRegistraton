@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';  
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '../_components/appbar';
-import Nav from '../_components/nav'; 
+import Nav from '../_components/nav';
 
 
 const drawerWidth = 240;
@@ -39,44 +39,44 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
+    height: `${580}px`
   },
 });
 
 
 class Home extends Component {
 
-   render() {
-     const { classes } = this.props;
+  render() {
+    const { classes } = this.props;
 
-      return (
+    return (
 
-        <div className={classes.root}>
-            <div className={classes.appFrame}>
-            <AppBar/>
-            <Nav />
-            <main className={classes.content}>
-                <div className={classes.toolbar} />
-                <Typography>{'Home'}</Typography>
-            </main>
-            </div>
+      <div className={classes.root}>
+        <div className={classes.appFrame}>
+          <AppBar />
+          <Nav />
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Typography>{'Home'}</Typography>
+          </main>
         </div>
-      );
-   }
+      </div>
+    );
+  }
 }
-  
+
 Home.propTypes = {
-      classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
 };
-    
-  
+
+
 function mapStateToProps(state) {
-    return state;
+  return state;
 }
 
 
 const connectedHomePage = withRouter(connect(mapStateToProps, null, null, {
-    pure: false
+  pure: false
 })(withStyles(styles)(Home)));
 
 export { connectedHomePage as Home };
-  
