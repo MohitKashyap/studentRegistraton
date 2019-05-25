@@ -89,6 +89,10 @@ class AddVendor extends Component {
             gender: this.props.vendor.gender,
             dob: this.props.vendor.dob,
             qualification: this.props.vendor.qualification,
+            working: this.props.vendor.working,
+            service: this.props.vendor.service,
+            organisation: this.props.vendor.organisation,
+            experience: this.props.vendor.experience,
         }
 
         if (params.id) {
@@ -188,17 +192,6 @@ class AddVendor extends Component {
                                                     />
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    {/* <MuiPickersUtilsProvider >
-                                                        <Grid container className={classes.grid} justify="space-around">
-                                                            <DatePicker
-                                                                margin="normal"
-                                                                label="Date picker"
-                                                                value={this.props.vendor.dob}
-                                                                onChange={this.handleChange('dob')}
-                                                            />
-
-                                                        </Grid>
-                                                    </MuiPickersUtilsProvider> */}
                                                     <TextField
                                                         id="dob"
                                                         label="Date of Birth"
@@ -239,6 +232,64 @@ class AddVendor extends Component {
                                                         <MenuItem value="Other">Other</MenuItem>
                                                     </Select>
                                                 </Grid>
+                                                <Grid item xs={3}>
+                                                    <InputLabel htmlFor="working">working</InputLabel>
+                                                    <Select
+                                                        id="working"
+                                                        label="Working"
+                                                        value={this.props.vendor.working}
+                                                        onChange={this.handleChange('working')}
+                                                        inputProps={{
+                                                            name: 'working',
+                                                            id: 'working',
+                                                        }}
+                                                    >
+                                                        <MenuItem value="Yes">Yes</MenuItem>
+                                                        <MenuItem value="No">No</MenuItem>
+                                                    </Select>
+                                                </Grid>
+                                            </Grid>
+                                            <br />
+                                            <Grid container spacing={24}>
+
+                                                {
+                                                    this.props.vendor.working === "Yes" &&
+                                                    <Grid item xs={3}>
+                                                        <TextField
+                                                            id="service"
+                                                            label="Service / Business"
+                                                            className={classes.textField}
+                                                            value={this.props.vendor.service}
+                                                            onChange={this.handleChange('service')}
+                                                            margin="normal"
+                                                        />
+                                                    </Grid>
+                                                }
+                                                {
+                                                    this.props.vendor.working === "Yes" &&
+                                                    <Grid item xs={3}>
+                                                        <TextField
+                                                            id="organisation"
+                                                            label="Organisation"
+                                                            className={classes.textField}
+                                                            value={this.props.vendor.organisation}
+                                                            onChange={this.handleChange('organisation')}
+                                                            margin="normal"
+                                                        />
+                                                    </Grid>
+                                                }
+                                                {
+                                                    this.props.vendor.working === "Yes" && <Grid item xs={3}>
+                                                        <TextField
+                                                            id="experience"
+                                                            label="Working Experience"
+                                                            className={classes.textField}
+                                                            value={this.props.vendor.experience}
+                                                            onChange={this.handleChange('experience')}
+                                                            margin="normal"
+                                                        />
+                                                    </Grid>
+                                                }
                                             </Grid>
                                             <br />
                                             <Grid container spacing={24}>
@@ -268,7 +319,7 @@ class AddVendor extends Component {
                         </Grid>
                     </main>
                 </div>
-            </div>
+            </div >
         );
     }
 }

@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { userActions } from '../_actions';
 import { history } from '../_helpers';
@@ -90,7 +88,6 @@ class Login extends Component {
 
     render() {
         const { classes } = this.props;
-        const { errors } = this.state;
         return (
             <main className={classes.main}>
                 <CssBaseline />

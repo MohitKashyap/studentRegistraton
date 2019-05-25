@@ -58,7 +58,7 @@ function editVendorInfo(id, payload) {
         userService.put(apiEndpoint, payload)
             .then((response) => {
                 dispatch(updatedUserInfo());
-                history.push('/vendor');
+                history.push('/registrations');
             })
     }
 }
@@ -99,7 +99,11 @@ export function editVendorsDetails(vendor) {
         address: vendor.address,
         dob: vendor.dob,
         gender: vendor.gender,
-        qualification: vendor.qualification
+        qualification: vendor.qualification,
+        working: vendor.working,
+        experience: vendor.experience,
+        organisation: vendor.organisation,
+        service: vendor.service,
     }
 }
 

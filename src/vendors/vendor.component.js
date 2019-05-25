@@ -25,6 +25,8 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     flexGrow: 1,
+    width: '100%',
+    overflowX: 'auto',
   },
   appFrame: {
     zIndex: 1,
@@ -53,7 +55,6 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3,
     height: `${580}px`
   },
-
   paper: {
     position: 'absolute',
     width: theme.spacing.unit * 50,
@@ -114,14 +115,13 @@ class Vendor extends Component {
             </Grid>
             <br />
             <Grid container spacing={24}>
-              <Paper className={classes.root}>
+              <Paper className="container">
                 <Table className={classes.table}>
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
                       <TableCell numeric>Mobile</TableCell>
                       <TableCell numeric>Email</TableCell>
-                      <TableCell>Address</TableCell>
                       <TableCell>Date of Birth</TableCell>
                       <TableCell>Gender</TableCell>
                       <TableCell>Qualification</TableCell>
@@ -137,7 +137,6 @@ class Vendor extends Component {
                           </TableCell>
                           <TableCell numeric>{n.mobile}</TableCell>
                           <TableCell numeric>{n.email}</TableCell>
-                          <TableCell>{n.address}</TableCell>
                           <TableCell>{n.dob}</TableCell>
                           <TableCell>{n.gender}</TableCell>
                           <TableCell>{n.qualification}</TableCell>
