@@ -29,7 +29,7 @@ function createVendor(payload, callback) {
         userService.post(apiEndpoint, payload)
             .then((response) => {
                 dispatch(createUserInfo());
-                history.push('/register');
+                // history.push('/register');
                 callback();
             })
     }
