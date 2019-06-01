@@ -9,7 +9,6 @@ export const vendorAction = {
     createVendor,
     deleteVendorById
 };
-
 function getVendor() {
     return dispatch => {
         let apiEndpoint = 'vendors';
@@ -30,7 +29,7 @@ function createVendor(payload) {
         userService.post(apiEndpoint, payload)
             .then((response) => {
                 dispatch(createUserInfo());
-                history.push('/registrations');
+                //history.push('/registrations');
             })
     }
 }
@@ -46,9 +45,9 @@ function getVendorById(id) {
     };
 }
 
-function onChangeProps(props, event) {
+function onChangeProps(props, value) {
     return dispatch => {
-        dispatch(handleOnChangeProps(props, event.target.value));
+        dispatch(handleOnChangeProps(props, value));
     }
 }
 

@@ -1,72 +1,57 @@
 import React, { Component } from 'react';
-import AppBar from '../_components/appbar';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Nav from '../_components/nav';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { vendorAction } from '../_actions';
 import { withRouter } from 'react-router-dom';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-// import 'date-fns';
-// import DateFnsUtils from '@date-io/date-fns';
-// import { MuiPickersUtilsProvider, DatePicker } from 'material-ui-pickers';
+import DemoNavbar from '../Navbars/DemoNavbar';
+import ReactDatetime from "react-datetime";
+import cs from "classnames";
+import SimpleFooter from "../Footers/SimpleFooter";
 
-const drawerWidth = 240;
-
-const styles = theme => ({
-
-    root: {
-        flexGrow: 1,
-    },
-
-    contentRoot: {
-        ...theme.mixins.gutters(),
-        paddingTop: theme.spacing.unit * 2,
-        paddingBottom: theme.spacing.unit * 2,
-    },
-
-    appFrame: {
-        zIndex: 1,
-        overflow: 'hidden',
-        position: 'relative',
-        display: 'flex',
-        width: '100%',
-    },
-    appBar: {
-        width: `calc(100% - ${drawerWidth}px)`,
-    },
-    'appBar-left': {
-        marginLeft: drawerWidth,
-    },
-    'appBar-right': {
-        marginRight: drawerWidth,
-    },
-    drawerPaper: {
-        position: 'relative',
-        width: drawerWidth,
-    },
-    toolbar: theme.mixins.toolbar,
-    content: {
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.default,
-        padding: theme.spacing.unit * 3,
-    },
-});
-
+import {
+    Button,
+    Card,
+    CardHeader,
+    CardBody,
+    FormGroup,
+    Form,
+    Input,
+    InputGroup,
+    Container,
+    Modal,
+    InputGroupText,
+    InputGroupAddon,
+    Row,
+    Col
+} from "reactstrap";
 class AddVendor extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isWorking: false,
+            invalidName: false,
+            invalidMobile: false,
+            invalidEmail: false
+        };
+    }
 
     handleChange = prop => event => {
         const { dispatch } = this.props;
-        dispatch(vendorAction.onChangeProps(prop, event));
+        const value = event.target.value;
+        if (prop === "name" && value) {
+            this.setState({ invalidName: false });
+        } else if (prop === "email" && value) {
+            this.setState({ invalidEmail: false });
+        } else if (prop === "mobile" && value) {
+            this.setState({ invalidMobile: false });
+        }
+        dispatch(vendorAction.onChangeProps(prop, value));
     };
-
+    handleDate = prop => event => {
+        const dob = new Date(event).toString();
+        const { dispatch } = this.props;
+        dispatch(vendorAction.onChangeProps(prop, dob));
+    }
     componentDidMount() {
         const { match: { params } } = this.props;
 
@@ -75,12 +60,54 @@ class AddVendor extends Component {
             dispatch(vendorAction.getVendorById(params.id));
         }
     }
-
-
     handleClick(event) {
         const { match: { params } } = this.props;
         const { dispatch } = this.props;
-
+        let payload = {
+            name: this.props.vendor.name,
+            mobile: this.props.vendor.mobile,
+            email: this.props.vendor.email,
+            address: this.props.vendor.address,
+            gender: this.props.vendor.gender,
+            dob: this.props.vendor.dob,
+            qualification: this.props.vendor.qualification,
+            working: this.props.vendor.working,
+            service: this.props.vendor.service,
+            organisation: this.props.vendor.organisation,
+            experience: this.props.vendor.experience,
+        }
+        if (this.isValid()) {
+            if (params.id) {
+                dispatch(vendorAction.editVendorInfo(params.id, payload));
+            } else {
+                dispatch(vendorAction.createVendor(payload, () => {
+                    this.clearForm();
+                    this.toggleModal("notificationModal");
+                }));
+            }
+        }
+    }
+    clearForm = () => {
+        const { dispatch } = this.props;
+        dispatch(vendorAction.onChangeProps("name", null));
+        dispatch(vendorAction.onChangeProps("mobile", null));
+        dispatch(vendorAction.onChangeProps("email", null));
+        dispatch(vendorAction.onChangeProps("address", null));
+        dispatch(vendorAction.onChangeProps("gender", null));
+        dispatch(vendorAction.onChangeProps("dob", null));
+        dispatch(vendorAction.onChangeProps("qualification", null));
+        dispatch(vendorAction.onChangeProps("working", null));
+        dispatch(vendorAction.onChangeProps("service", null));
+        dispatch(vendorAction.onChangeProps("organisation", null));
+        dispatch(vendorAction.onChangeProps("experience", null));
+    }
+    toggleModal = state => {
+        this.setState({
+            [state]: !this.state[state]
+        });
+    };
+    isValid = () => {
+        let isValid = true;
         let payload = {
             name: this.props.vendor.name,
             mobile: this.props.vendor.mobile,
@@ -95,231 +122,297 @@ class AddVendor extends Component {
             experience: this.props.vendor.experience,
         }
 
-        if (params.id) {
-            dispatch(vendorAction.editVendorInfo(params.id, payload));
-        } else {
-            dispatch(vendorAction.createVendor(payload));
+        if (!payload.name) {
+            this.setState({ invalidName: true });
+            isValid = false;
         }
-    }
+        if (!payload.mobile && !(payload && payload.mobile.length >= 10 && payload.mobile.length <= 13)) {
+            this.setState({ invalidMobile: true });
+            isValid = false;
+        }
+        if (payload.email) {
+            if (!payload.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
+                this.setState({ invalidEmail: true });
+                isValid = false;
+            }
+        } else {
+            this.setState({ invalidEmail: true });
+            isValid = false;
+        }
 
+        return isValid;
+    }
+    isWorking = prop => event => {
+        this.setState({ isWorking: event.target.value }, () => { this.handleChange(prop, event); });
+    };
 
     render() {
-        const { classes } = this.props;
-        const { match: { params } } = this.props;
-        console.log(this.props.vendor);
-
-
-        function InsertText(props) {
-            return <Typography>{'Add New Vendor'}</Typography>;
-        }
-
-        function EditText(props) {
-            return <Typography>{'Edit Vendor'}</Typography>;
-        }
-
-
-        function SegHeader() {
-            if (params.id) {
-                return <EditText />;
-            }
-            return <InsertText />;
-        }
-
         return (
-
-            <div className={classes.root}>
-                <div className={classes.appFrame}>
-                    <AppBar />
-                    <Nav />
-                    <main className={classes.content}>
-                        <div className={classes.toolbar} />
-                        {/* <Grid container spacing={24}>
-                    <Grid item xs={3}>
-                        <SegHeader />
-                    </Grid>
-                    <Grid item xs={6}>
-                    </Grid>
-                    <Grid item xs={3} container justify="flex-end">                            
-                    </Grid>
-                </Grid> */}
-                        <br />
-                        <Grid container spacing={24}>
-                            <Grid item xs={12}>
-                                <div>
-                                    <Paper className={classes.contentRoot} elevation={1}>
-                                        <form className={classes.container}>
-                                            <Grid container spacing={24}>
-                                                <Grid item xs={3}>
-                                                    <TextField
-                                                        id="name"
-                                                        label="Name"
-                                                        className={classes.textField}
-                                                        value={this.props.vendor.name}
-                                                        onChange={this.handleChange('name')}
-                                                        margin="normal"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <TextField
-                                                        id="mobile"
-                                                        label="Mobile"
-                                                        className={classes.textField}
-                                                        value={this.props.vendor.mobile}
-                                                        onChange={this.handleChange('mobile')}
-                                                        margin="normal"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <TextField
-                                                        id="email"
-                                                        label="Email Id"
-                                                        className={classes.textField}
-                                                        value={this.props.vendor.email}
-                                                        onChange={this.handleChange('email')}
-                                                        margin="normal"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <TextField
-                                                        id="address"
-                                                        label="Address"
-                                                        multiline
-                                                        rowsMax="4"
-                                                        className={classes.textField}
-                                                        value={this.props.vendor.address}
-                                                        onChange={this.handleChange('address')}
-                                                        margin="normal"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <TextField
-                                                        id="dob"
-                                                        label="Date of Birth"
-                                                        multiline
-                                                        placeholder="DD/MM/YYYY"
-                                                        rowsMax="4"
-                                                        className={classes.textField}
-                                                        value={this.props.vendor.dob}
-                                                        onChange={this.handleChange('dob')}
-                                                        margin="normal"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <TextField
-                                                        id="qualification"
-                                                        label="Highest Qualification"
-                                                        className={classes.textField}
-                                                        value={this.props.vendor.qualification}
-                                                        onChange={this.handleChange('qualification')}
-                                                        margin="normal"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <InputLabel htmlFor="gender">Gender</InputLabel>
-                                                    <Select
-                                                        id="gender"
-                                                        label="Gender"
-                                                        value={this.props.vendor.gender}
-
-                                                        onChange={this.handleChange('gender')}
-                                                        inputProps={{
-                                                            name: 'gender',
-                                                            id: 'gender',
-                                                        }}
+            <React.Fragment>
+                <DemoNavbar />
+                <main ref="main">
+                    <section className="section section-shaped section-lg">
+                        <div className="shape shape-style-1 bg-gradient-default">
+                            <span />
+                            <span />
+                            <span />
+                            <span />
+                            <span />
+                            <span />
+                            <span />
+                            <span />
+                        </div>
+                        <Container className="pt-lg-md">
+                            <Row className="justify-content-center">
+                                <Col lg="8">
+                                    <Card className="bg-secondary shadow border-0">
+                                        <CardHeader className="bg-white pb-8">
+                                            <div className="text-muted text-center mb-3">
+                                                <medium>GET IN TOUCH</medium>
+                                            </div>
+                                        </CardHeader>
+                                        <CardBody className="px-lg-5 py-lg-5">
+                                            <Form role="form" >
+                                                <FormGroup className={cs(this.state.invalidName ? "has-danger" : "")}>
+                                                    <InputGroup className="input-group-alternative mb-3">
+                                                        <Input
+                                                            className={this.state.invalidName ? "is-invalid" : "is-valid"}
+                                                            placeholder="Name"
+                                                            type="text"
+                                                            name="name"
+                                                            value={this.props.vendor.name}
+                                                            onChange={this.handleChange('name')}
+                                                        />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                                <FormGroup className={cs(this.state.invalidEmail ? "has-danger" : "")}>
+                                                    <InputGroup className="input-group-alternative mb-3">
+                                                        <Input
+                                                            className={this.state.invalidEmail ? "is-invalid" : "is-valid"}
+                                                            placeholder="Email"
+                                                            type="email"
+                                                            name="email"
+                                                            value={this.props.vendor.email}
+                                                            onChange={this.handleChange('email')} />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                                <FormGroup className={cs(this.state.invalidMobile ? "has-danger" : "")}>
+                                                    <InputGroup className="input-group-alternative">
+                                                        <Input
+                                                            className={this.state.invalidMobile ? "is-invalid" : "is-valid"}
+                                                            placeholder="Mobile"
+                                                            type="text"
+                                                            name="mobile"
+                                                            value={this.props.vendor.mobile}
+                                                            onChange={this.handleChange('mobile')}
+                                                        />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <InputGroup className="input-group-alternative mb-3">
+                                                        <Input
+                                                            placeholder="Address"
+                                                            type="text"
+                                                            value={this.props.vendor.address}
+                                                            onChange={this.handleChange('address')}
+                                                        />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <InputGroup className="input-group-alternative">
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText>
+                                                                <i className="ni ni-calendar-grid-58" />
+                                                            </InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <ReactDatetime
+                                                            inputProps={{
+                                                                placeholder: "Date of birth"
+                                                            }}
+                                                            timeFormat={false}
+                                                            value={this.props.vendor.dob}
+                                                            onChange={this.handleDate('dob')}
+                                                        />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <InputGroup className="input-group-alternative mb-3">
+                                                        <Input
+                                                            placeholder="Qualification"
+                                                            type="text"
+                                                            value={this.props.vendor.qualification}
+                                                            onChange={this.handleChange('qualification')} />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <Row>
+                                                        <Col sm="6">
+                                                            <div className="custom-control custom-radio mb-3">
+                                                                <div className="custom-control custom-radio mb-3">
+                                                                    <label htmlFor="gender">Gender</label>
+                                                                </div>
+                                                                <div className="custom-control custom-radio mb-3">
+                                                                    <input
+                                                                        className="custom-control-input"
+                                                                        id="customRadio5"
+                                                                        name="gender"
+                                                                        type="radio"
+                                                                        value="Male"
+                                                                        onChange={this.handleChange('gender')}
+                                                                    />
+                                                                    <label className="custom-control-label" htmlFor="customRadio5">
+                                                                        Male
+                                                                  </label>
+                                                                </div>
+                                                                <div className="custom-control custom-radio mb-3">
+                                                                    <input
+                                                                        className="custom-control-input"
+                                                                        id="customRadio6"
+                                                                        name="gender"
+                                                                        type="radio"
+                                                                        value="Female"
+                                                                        onChange={this.handleChange('gender')}
+                                                                    />
+                                                                    <label className="custom-control-label" htmlFor="customRadio6">
+                                                                        Female
+          </label>
+                                                                </div>
+                                                            </div>
+                                                        </Col>
+                                                        <Col sm="6">
+                                                            <div className="custom-control custom-radio mb-3">
+                                                                <div className="custom-control custom-radio mb-3">
+                                                                    <label htmlFor="working">Working</label>
+                                                                </div>
+                                                                <div className="custom-control custom-radio mb-3">
+                                                                    <input
+                                                                        className="custom-control-input"
+                                                                        id="customRadio3"
+                                                                        name="working"
+                                                                        type="radio"
+                                                                        value={true}
+                                                                        onChange={this.isWorking('working')}
+                                                                    />
+                                                                    <label className="custom-control-label" htmlFor="customRadio3">
+                                                                        Yes
+                                                                    </label>
+                                                                </div>
+                                                                <div className="custom-control custom-radio mb-3">
+                                                                    <input
+                                                                        className="custom-control-input"
+                                                                        id="customRadio4"
+                                                                        name="working"
+                                                                        type="radio"
+                                                                        value={false}
+                                                                        onChange={this.isWorking('working')}
+                                                                    />
+                                                                    <label className="custom-control-label" htmlFor="customRadio4">
+                                                                        No
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </Col>
+                                                    </Row>
+                                                </FormGroup>
+                                                {this.state.isWorking === "true" ?
+                                                    <FormGroup>
+                                                        <InputGroup className="input-group-alternative mb-3">
+                                                            <Input
+                                                                placeholder="Organization"
+                                                                type="text"
+                                                                value={this.props.vendor.organisation}
+                                                                onChange={this.handleChange('organisation')} />
+                                                        </InputGroup>
+                                                    </FormGroup>
+                                                    : null
+                                                }
+                                                {
+                                                    this.state.isWorking === "true" ?
+                                                        <FormGroup>
+                                                            <InputGroup className="input-group-alternative mb-3">
+                                                                <Input
+                                                                    placeholder="Service"
+                                                                    type="text"
+                                                                    value={this.props.vendor.service}
+                                                                    onChange={this.handleChange('service')} />
+                                                            </InputGroup>
+                                                        </FormGroup> : null
+                                                }
+                                                {this.state.isWorking === "true" ?
+                                                    <FormGroup>
+                                                        <InputGroup className="input-group-alternative mb-3">
+                                                            <Input
+                                                                placeholder="Experience"
+                                                                type="text"
+                                                                value={this.props.vendor.experience}
+                                                                onChange={this.handleChange('experience')} />
+                                                        </InputGroup>
+                                                    </FormGroup> : null
+                                                }
+                                                <div className="text-center">
+                                                    <Button
+                                                        className="mt-4"
+                                                        color="primary"
+                                                        type="button"
+                                                        onClick={(event) => this.handleClick(event)}
                                                     >
-                                                        <MenuItem value="Male">Male</MenuItem>
-                                                        <MenuItem value="Female">Female</MenuItem>
-                                                        <MenuItem value="Other">Other</MenuItem>
-                                                    </Select>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <InputLabel htmlFor="working">working</InputLabel>
-                                                    <Select
-                                                        id="working"
-                                                        label="Working"
-                                                        value={this.props.vendor.working}
-                                                        onChange={this.handleChange('working')}
-                                                        inputProps={{
-                                                            name: 'working',
-                                                            id: 'working',
-                                                        }}
-                                                    >
-                                                        <MenuItem value="Yes">Yes</MenuItem>
-                                                        <MenuItem value="No">No</MenuItem>
-                                                    </Select>
-                                                </Grid>
-                                            </Grid>
-                                            <br />
-                                            <Grid container spacing={24}>
-
-                                                {
-                                                    this.props.vendor.working === "Yes" &&
-                                                    <Grid item xs={3}>
-                                                        <TextField
-                                                            id="service"
-                                                            label="Service / Business"
-                                                            className={classes.textField}
-                                                            value={this.props.vendor.service}
-                                                            onChange={this.handleChange('service')}
-                                                            margin="normal"
-                                                        />
-                                                    </Grid>
-                                                }
-                                                {
-                                                    this.props.vendor.working === "Yes" &&
-                                                    <Grid item xs={3}>
-                                                        <TextField
-                                                            id="organisation"
-                                                            label="Organisation"
-                                                            className={classes.textField}
-                                                            value={this.props.vendor.organisation}
-                                                            onChange={this.handleChange('organisation')}
-                                                            margin="normal"
-                                                        />
-                                                    </Grid>
-                                                }
-                                                {
-                                                    this.props.vendor.working === "Yes" && <Grid item xs={3}>
-                                                        <TextField
-                                                            id="experience"
-                                                            label="Working Experience"
-                                                            className={classes.textField}
-                                                            value={this.props.vendor.experience}
-                                                            onChange={this.handleChange('experience')}
-                                                            margin="normal"
-                                                        />
-                                                    </Grid>
-                                                }
-                                            </Grid>
-                                            <br />
-                                            <Grid container spacing={24}>
-                                                <Grid item xs={3}>
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                </Grid>
-                                                <Grid item xs={3} container justify="center">
-                                                    <Grid container spacing={24}>
-                                                        <Grid item xs={6} container justify="center">
-                                                            <Button variant="contained" color="secondary" className={classes.button} component='a' href="/registrations">
-                                                                Cancel
-                                                    </Button>
-                                                        </Grid>
-                                                        <Grid item xs={6} container justify="flex-start">
-                                                            <Button variant="contained" color="primary" className={classes.button} onClick={(event) => this.handleClick(event)}>
-                                                                Save
-                                                    </Button>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                            </Grid>
-                                        </form>
-                                    </Paper>
-                                </div>
-                            </Grid>
-                        </Grid>
-                    </main>
-                </div>
-            </div >
+                                                        Submit
+                          </Button>
+                                                </div>
+                                            </Form>
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            </Row>
+                        </Container>
+                    </section>
+                </main>
+                <SimpleFooter />
+                <Modal
+                    className="modal-dialog-centered modal-danger"
+                    contentClassName="bg-gradient-danger"
+                    isOpen={this.state.notificationModal}
+                    toggle={() => this.toggleModal("notificationModal")}
+                >
+                    <div className="modal-header">
+                        <h6 className="modal-title" id="modal-title-notification">
+                            IIDS
+                </h6>
+                        <button
+                            aria-label="Close"
+                            className="close"
+                            data-dismiss="modal"
+                            type="button"
+                            onClick={() => this.toggleModal("notificationModal")}
+                        >
+                            <span aria-hidden={true}>×</span>
+                        </button>
+                    </div>
+                    <div className="modal-body">
+                        <div className="py-3 text-center">
+                            <i className="ni ni-bell-55 ni-3x" />
+                            <h4 className="heading mt-4">Thanks for your intrest.</h4>
+                            <p>
+                                Our counsellor will reach you soon for further process.
+                  </p>
+                        </div>
+                    </div>
+                    <div className="modal-footer">
+                        <Button className="btn-white" color="default" type="button">
+                            Ok, Got it
+                </Button>
+                        <Button
+                            className="text-white ml-auto"
+                            color="link"
+                            data-dismiss="modal"
+                            type="button"
+                            onClick={() => this.toggleModal("notificationModal")}
+                        >
+                            Close
+                </Button>
+                    </div>
+                </Modal>
+            </React.Fragment >
         );
     }
 }
@@ -327,7 +420,7 @@ class AddVendor extends Component {
 //export default Home;
 
 AddVendor.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object,
 };
 
 
@@ -339,6 +432,6 @@ const mapStateToProps = (state) => {
 
 const connectedAddVendorPage = withRouter(connect(mapStateToProps, null, null, {
     pure: false
-})(withStyles(styles)(AddVendor)));
+})(AddVendor));
 
 export { connectedAddVendorPage as AddVendor };

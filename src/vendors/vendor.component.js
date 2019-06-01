@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import AppBar from '../_components/appbar';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Nav from '../_components/nav';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
