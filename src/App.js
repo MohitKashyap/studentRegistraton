@@ -23,7 +23,7 @@ class App extends Component {
             <PrivateRoute exact path='/registrations' component={Vendor} />
             <PrivateRoute exact path='/register' component={AddVendor} />
             <PrivateRoute exact path='/edit-registration/:id' component={AddVendor} />
-            <Route exact path='/' component={Login} />
+            <Route exact path='/' component={AddVendor} />
           </Switch>
         </Router>
       </div>

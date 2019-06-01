@@ -23,13 +23,14 @@ function getVendor() {
     };
 }
 
-function createVendor(payload) {
+function createVendor(payload, callback) {
     return dispatch => {
         let apiEndpoint = 'vendors/';
         userService.post(apiEndpoint, payload)
             .then((response) => {
                 dispatch(createUserInfo());
-                //history.push('/registrations');
+                history.push('/register');
+                callback();
             })
     }
 }

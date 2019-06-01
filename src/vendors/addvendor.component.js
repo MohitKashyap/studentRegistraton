@@ -89,22 +89,25 @@ class AddVendor extends Component {
     }
     clearForm = () => {
         const { dispatch } = this.props;
-        dispatch(vendorAction.onChangeProps("name", null));
-        dispatch(vendorAction.onChangeProps("mobile", null));
-        dispatch(vendorAction.onChangeProps("email", null));
-        dispatch(vendorAction.onChangeProps("address", null));
-        dispatch(vendorAction.onChangeProps("gender", null));
-        dispatch(vendorAction.onChangeProps("dob", null));
-        dispatch(vendorAction.onChangeProps("qualification", null));
-        dispatch(vendorAction.onChangeProps("working", null));
-        dispatch(vendorAction.onChangeProps("service", null));
-        dispatch(vendorAction.onChangeProps("organisation", null));
-        dispatch(vendorAction.onChangeProps("experience", null));
+        dispatch(vendorAction.onChangeProps("name", ""));
+        dispatch(vendorAction.onChangeProps("mobile", ""));
+        dispatch(vendorAction.onChangeProps("email", ""));
+        dispatch(vendorAction.onChangeProps("address", ""));
+        dispatch(vendorAction.onChangeProps("gender", ""));
+        dispatch(vendorAction.onChangeProps("dob", ""));
+        dispatch(vendorAction.onChangeProps("qualification", ""));
+        dispatch(vendorAction.onChangeProps("working", ""));
+        dispatch(vendorAction.onChangeProps("service", ""));
+        dispatch(vendorAction.onChangeProps("organisation", ""));
+        dispatch(vendorAction.onChangeProps("experience", ""));
+        this.setState({ isValid: true });
     }
     toggleModal = state => {
         this.setState({
             [state]: !this.state[state]
         });
+        this.clearForm();
+
     };
     isValid = () => {
         let isValid = true;
@@ -398,9 +401,6 @@ class AddVendor extends Component {
                         </div>
                     </div>
                     <div className="modal-footer">
-                        <Button className="btn-white" color="default" type="button">
-                            Ok, Got it
-                </Button>
                         <Button
                             className="text-white ml-auto"
                             color="link"
