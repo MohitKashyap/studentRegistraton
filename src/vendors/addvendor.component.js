@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { vendorAction } from '../_actions';
+import { queryAction } from '../_actions';
 import { withRouter } from 'react-router-dom';
 import DemoNavbar from '../Navbars/DemoNavbar';
 import ReactDatetime from "react-datetime";
@@ -45,19 +45,19 @@ class AddVendor extends Component {
         } else if (prop === "mobile" && value) {
             this.setState({ invalidMobile: false });
         }
-        dispatch(vendorAction.onChangeProps(prop, value));
+        dispatch(queryAction.onChangeProps(prop, value));
     };
     handleDate = prop => event => {
         const dob = new Date(event).toString();
         const { dispatch } = this.props;
-        dispatch(vendorAction.onChangeProps(prop, dob));
+        dispatch(queryAction.onChangeProps(prop, dob));
     }
     componentDidMount() {
         const { match: { params } } = this.props;
 
         if (params.id) {
             const { dispatch } = this.props;
-            dispatch(vendorAction.getVendorById(params.id));
+            dispatch(queryAction.getQueryById(params.id));
         }
     }
     handleClick(event) {
@@ -78,9 +78,9 @@ class AddVendor extends Component {
         }
         if (this.isValid()) {
             if (params.id) {
-                dispatch(vendorAction.editVendorInfo(params.id, payload));
+                dispatch(queryAction.editQueryInfo(params.id, payload));
             } else {
-                dispatch(vendorAction.createVendor(payload, () => {
+                dispatch(queryAction.createQuery(payload, () => {
                     this.clearForm();
                     this.toggleModal("notificationModal");
                 }));
@@ -89,17 +89,17 @@ class AddVendor extends Component {
     }
     clearForm = () => {
         const { dispatch } = this.props;
-        dispatch(vendorAction.onChangeProps("name", ""));
-        dispatch(vendorAction.onChangeProps("mobile", ""));
-        dispatch(vendorAction.onChangeProps("email", ""));
-        dispatch(vendorAction.onChangeProps("address", ""));
-        dispatch(vendorAction.onChangeProps("gender", ""));
-        dispatch(vendorAction.onChangeProps("dob", ""));
-        dispatch(vendorAction.onChangeProps("qualification", ""));
-        dispatch(vendorAction.onChangeProps("working", ""));
-        dispatch(vendorAction.onChangeProps("service", ""));
-        dispatch(vendorAction.onChangeProps("organisation", ""));
-        dispatch(vendorAction.onChangeProps("experience", ""));
+        dispatch(queryAction.onChangeProps("name", ""));
+        dispatch(queryAction.onChangeProps("mobile", ""));
+        dispatch(queryAction.onChangeProps("email", ""));
+        dispatch(queryAction.onChangeProps("address", ""));
+        dispatch(queryAction.onChangeProps("gender", ""));
+        dispatch(queryAction.onChangeProps("dob", ""));
+        dispatch(queryAction.onChangeProps("qualification", ""));
+        dispatch(queryAction.onChangeProps("working", ""));
+        dispatch(queryAction.onChangeProps("service", ""));
+        dispatch(queryAction.onChangeProps("organisation", ""));
+        dispatch(queryAction.onChangeProps("experience", ""));
         this.setState({ isValid: true });
     }
     toggleModal = state => {

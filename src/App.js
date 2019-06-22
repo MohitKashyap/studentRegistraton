@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Router, Switch, Route } from 'react-router-dom';
 import { Vendor } from './vendors/vendor.component';
 import { AddVendor } from './vendors/addvendor.component'
-import { Login } from './login/';
+//import { Login } from './login/';
 import { Home } from './home/';
 import { history } from './_helpers';
 import { PrivateRoute } from './_components';
